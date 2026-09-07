@@ -20,7 +20,7 @@ func main() {
 	}
 	defer db.Close()
 
-	r := router.Setup(db)
+	r := router.Setup(cfg, db)
 	if err := r.Run(":8080"); err != nil {
 		log.Fatalf("server stopped: %v", err)
 	}

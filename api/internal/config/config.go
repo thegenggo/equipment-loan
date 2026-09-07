@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 )
 
 type Config struct {
@@ -13,6 +14,8 @@ type Config struct {
 	DBPassword string
 	DBName     string
 	Port       string
+	JWTSecret  string
+	JWTTTL     time.Duration
 }
 
 func Load() (*Config, error) {
@@ -25,11 +28,19 @@ func Load() (*Config, error) {
 		DBPassword: require("DB_PASSWORD", &missing),
 		DBName:     require("DB_NAME", &missing),
 		Port:       require("PORT", &missing),
+		JWTSecret:  require("JWT_SECRET", &missing),
 	}
+	ttlRaw := require("JWT_TTL", &missing)
 
 	if len(missing) > 0 {
 		return nil, fmt.Errorf("missing environment variables: %s", strings.Join(missing, ", "))
 	}
+
+	ttl, err := time.ParseDuration(ttlRaw)
+	if err != nil {
+		return nil, fmt.Errorf("invalid JWT_TTL %q: %w", ttlRaw, err)
+	}
+	cfg.JWTTTL = ttl
 
 	return cfg, nil
 }
