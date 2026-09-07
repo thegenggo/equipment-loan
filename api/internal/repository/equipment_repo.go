@@ -108,3 +108,31 @@ func (r *EquipmentRepository) Delete(ctx context.Context, id int64) error {
 
 	return nil
 }
+
+func (r *EquipmentRepository) FindByIDForUpdate(ctx context.Context, exec Executor, id int64) (*model.Equipment, error) {
+	const query = `
+		SELECT id, code, name, category, status
+		FROM equipments
+		WHERE id = ?
+		FOR UPDATE`
+
+	var equipment model.Equipment
+	if err := exec.GetContext(ctx, &equipment, query, id); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, ErrEquipmentNotFound
+		}
+		return nil, fmt.Errorf("select equipment for update: %w", err)
+	}
+
+	return &equipment, nil
+}
+
+func (r *EquipmentRepository) UpdateStatus(ctx context.Context, exec Executor, id int64, status string) error {
+	const query = `UPDATE equipments SET status = ? WHERE id = ?`
+
+	if _, err := exec.ExecContext(ctx, query, status, id); err != nil {
+		return fmt.Errorf("update equipment status: %w", err)
+	}
+
+	return nil
+}

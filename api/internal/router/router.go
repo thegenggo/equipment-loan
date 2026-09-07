@@ -25,6 +25,11 @@ func Setup(cfg *config.Config, db *sqlx.DB) *gin.Engine {
 	equipmentService := service.NewEquipmentService(equipmentRepo)
 	equipmentHandler := handler.NewEquipmentHandler(equipmentService)
 
+	txManager := repository.NewTxManager(db)
+	loanRepo := repository.NewLoanRepository(db)
+	loanService := service.NewLoanService(txManager, loanRepo, equipmentRepo)
+	loanHandler := handler.NewLoanHandler(loanService)
+
 	r := gin.Default()
 
 	r.GET("/health", healthHandler.Check)
@@ -55,6 +60,22 @@ func Setup(cfg *config.Config, db *sqlx.DB) *gin.Engine {
 				admin.POST("", equipmentHandler.Create)
 				admin.PUT("/:id", equipmentHandler.Update)
 				admin.DELETE("/:id", equipmentHandler.Delete)
+			}
+		}
+
+		loans := api.Group("loans")
+		loans.Use(middleware.Auth(tokens))
+		{
+			loans.POST("", loanHandler.Create)
+			loans.GET("", loanHandler.List)
+			loans.GET("/:id", loanHandler.Get)
+			loans.PATCH("/:id/return", loanHandler.Return)
+
+			decisions := loans.Group("")
+			decisions.Use(middleware.RequireRole(model.RoleAdmin))
+			{
+				decisions.PATCH("/:id/approve", loanHandler.Approve)
+				decisions.PATCH("/:id/reject", loanHandler.Reject)
 			}
 		}
 	}

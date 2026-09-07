@@ -4,7 +4,6 @@ import (
 	"errors"
 	"log"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/thegenggo/equipment-loan/api/internal/httperr"
@@ -127,14 +126,4 @@ func (h *EquipmentHandler) writeError(c *gin.Context, err error, operation strin
 		log.Printf("%s: %v", operation, err)
 		httperr.Write(c, http.StatusInternalServerError, "internal_error", "the request could not be completed")
 	}
-}
-
-func pathID(c *gin.Context) (int64, bool) {
-	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
-	if err != nil || id < 1 {
-		httperr.Write(c, http.StatusBadRequest, "invalid_id", "id must be a positive integer")
-		return 0, false
-	}
-
-	return id, true
 }

@@ -95,7 +95,7 @@ func (s *EquipmentService) Delete(ctx context.Context, id int64) error {
 	case errors.Is(err, repository.ErrEquipmentNotFound):
 		return ErrEquipmentNotFound
 	case errors.Is(err, repository.ErrStillReferenced):
-		return ErrEmailTaken
+		return ErrEquipmentInUse
 	}
 
 	return err
