@@ -66,3 +66,9 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
 
   return (await response.json()) as T
 }
+
+export function toMessage(error: unknown): string {
+  return error instanceof ApiRequestError
+    ? error.message
+    : 'เชื่อมต่อเซิร์ฟเวอร์ไม่ได้ ลองใหม่อีกครั้ง'
+}
