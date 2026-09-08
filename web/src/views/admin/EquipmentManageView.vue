@@ -1,0 +1,1 @@
+<template><h1>ชื่อหน้า</h1></template>
