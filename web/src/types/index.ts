@@ -1,6 +1,7 @@
 export type Role = 'staff' | 'admin'
 export type EquipmentStatus = 'available' | 'borrowed' | 'repair'
 export type LoanStatus = 'pending' | 'approved' | 'rejected' | 'returned'
+export type EditableEquipmentStatus = Extract<EquipmentStatus, 'available' | 'repair'>
 
 export interface User {
   id: number
@@ -40,4 +41,14 @@ export interface LoginResponse {
 export interface ApiError {
   error: string
   message: string
+}
+
+export interface EquipmentInput {
+  code: string
+  name: string
+  category: string
+}
+
+export interface EquipmentUpdateInput extends EquipmentInput {
+  status: EditableEquipmentStatus
 }
