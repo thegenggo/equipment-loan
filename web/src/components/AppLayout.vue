@@ -16,7 +16,7 @@
   <header v-if="auth.isAuthenticated" class="layout__header">
     <nav>
       <RouterLink :to="{ name: 'equipments' }">อุปกรณ์</RouterLink>
-      <RouterLink :to="{ name: 'my-loans' }">คำขอของฉัน</RouterLink>
+      <RouterLink :to="{ name: 'my-loans' }">{{ auth.isAdmin ? 'คำขอทั้งหมด' : 'คำขอของฉัน' }}</RouterLink>
       <template v-if="auth.isAdmin">
         <RouterLink :to="{ name: 'admin-loans' }">อนุมัติคำขอ</RouterLink>
         <RouterLink :to="{ name: 'admin-equipments' }">จัดการอุปกรณ์</RouterLink>
