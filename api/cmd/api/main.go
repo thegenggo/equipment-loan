@@ -24,4 +24,16 @@ func main() {
 	if err := r.Run(":8080"); err != nil {
 		log.Fatalf("server stopped: %v", err)
 	}
+
+
+
+
+
+
+
+
+
+
+
+
 }
